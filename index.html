@@ -258,49 +258,48 @@
         // 2. Resource Data (The "Strong References")
         const resources = [
             {
-                type: "video",
-                title: "Crust of Rust: Async/Await",
+                type: "Video",
+                title: "Crust of Rust: Async & Tokio",
                 author: "Jon Gjengset",
-                desc: "Essential viewing. To run distributed Rust, you must understand the Tokio runtime, as network calls are asynchronous.",
-                link: "YouTube"
+                desc: "Imprescindible para entender cómo Rust maneja miles de conexiones de red simultáneas.",
+                link: "https://www.youtube.com/watch?v=Th3vSvtkgT4"
             },
             {
-                type: "tutorial",
-                title: "Rust Microservices with Tonic (gRPC)",
-                author: "LogRocket",
-                desc: "Learn how to make containers talk to each other efficiently using gRPC, a common pattern for node-to-node communication.",
-                link: "Web Tutorial"
-            },
-            {
-                type: "paper",
-                title: "Bastion: Highly-Available Distributed Actors",
+                type: "Tutorial",
+                title: "Rust Distributed Systems with Bastion",
                 author: "Bastion Project",
-                desc: "Documentation for the Bastion crate, which is specifically designed to create fault-tolerant distributed systems in Rust.",
-                link: "Crate Docs"
+                desc: "Guía oficial para crear clusters de Rust que se auto-reparan.",
+                link: "https://bastion.rs/"
             },
             {
-                type: "tutorial",
-                title: "Docker Swarm Mode Overview",
-                author: "Docker Inc.",
-                desc: "You have 3 computers. Docker Swarm is the easiest way to turn them into a single virtual computer to manage your 9 containers.",
-                link: "Documentation"
+                type: "Librería",
+                title: "Redis-rs: El puente de datos",
+                author: "Mitsuhiko",
+                desc: "Cliente de Redis para Rust. Ideal para tu estrategia de colas en los 9 contenedores.",
+                link: "https://github.com/redis-rs/redis-rs"
             },
             {
-                type: "video",
-                title: "Building Distributed Systems in Rust",
-                author: "InfoQ",
-                desc: "A high-level conference talk covering the architectural patterns suitable for Rust-based distributed computing.",
-                link: "Video"
+                type: "Papel",
+                title: "Zenoh: Zero Overhead Pub/Sub",
+                author: "Eclipse Foundation",
+                desc: "Protocolo de comunicación ultra-rápido para redes distribuidas y VPNs.",
+                link: "https://zenoh.io/"
             },
             {
-                type: "paper",
-                title: "rsmpi: MPI bindings for Rust",
-                author: "GitHub",
-                desc: "If you need pure number-crunching speed and synchronized steps, this library connects Rust to standard HPC MPI implementations.",
-                link: "GitHub"
+                type: "Tutorial",
+                title: "Docker Swarm para 3 Nodos",
+                author: "Docker Docs",
+                desc: "Cómo unir tus 3 computadoras en un solo cluster virtual.",
+                link: "https://docs.docker.com/engine/swarm/swarm-tutorial/"
+            },
+            {
+                type: "Librería",
+                title: "Rayon: Paralelismo Local",
+                author: "Niko Matsakis",
+                desc: "Para que cada contenedor use todos los núcleos de la CPU al procesar su parte.",
+                link: "https://github.com/rayon-rs/rayon"
             }
         ];
-
         // --- CHART INITIALIZATION ---
         
         let radarChart;
