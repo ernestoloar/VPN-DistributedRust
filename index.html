@@ -1,0 +1,479 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Rust Distributed Systems Guide</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* Custom styles for the chart container as per requirements */
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 600px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container {
+                height: 350px;
+            }
+        }
+        
+        /* Node Pulse Animation for the Visualizer */
+        @keyframes pulse-ring {
+            0% { transform: scale(0.8); opacity: 0.5; }
+            100% { transform: scale(1.3); opacity: 0; }
+        }
+        .node-active::before {
+            content: '';
+            position: absolute;
+            left: -10px; top: -10px; right: -10px; bottom: -10px;
+            border-radius: 50%;
+            border: 2px solid #ea580c;
+            animation: pulse-ring 2s infinite;
+        }
+    </style>
+</head>
+<body class="bg-slate-50 text-slate-800 font-sans">
+
+    <!-- Chosen Palette: Warm Neutrals with Rust Orange Accents -->
+    <!-- Application Structure Plan: 
+         1. Hero Section: Direct confirmation of feasibility.
+         2. Infrastructure Visualizer: Interactive diagram of the 3-Computer/9-Docker/VPN setup.
+         3. Strategy Selector: Comparing 3 implementation methods (Queue, Actor, MPI).
+         4. Performance & Trade-offs: Chart.js visualization of complexity vs. performance.
+         5. Resource Library: The requested "Strong References" (Videos, Papers, tutorials) in a filterable list.
+    -->
+    <!-- Visualization & Content Choices:
+         - Visualizer: CSS/HTML Grid to show nodes/containers. Interaction: Click to see network flow.
+         - Comparison: Chart.js Radar chart to compare strategies (Latency, Throughput, Ease of Dev).
+         - Logic: Vanilla JS to handle state changes (Strategy selection) and filtering resources.
+    -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+
+    <!-- Main App Container -->
+    <div id="app" class="max-w-6xl mx-auto px-4 py-8">
+
+        <!-- Header -->
+        <header class="mb-12 text-center">
+            <h1 class="text-4xl font-bold text-slate-900 mb-4">Distributed Rust Architecture</h1>
+            <p class="text-xl text-slate-600 max-w-2xl mx-auto">
+                Feasibility study and implementation guide for running high-performance algorithms across 
+                <span class="font-bold text-orange-600">3 Networked Nodes</span> and 
+                <span class="font-bold text-orange-600">9 Docker Containers</span>.
+            </p>
+        </header>
+
+        <!-- Section 1: Feasibility & Visualizer -->
+        <section class="mb-16">
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6">
+                <div class="mb-6">
+                    <h2 class="text-2xl font-bold text-slate-800 mb-2">1. Infrastructure Topology</h2>
+                    <p class="text-slate-600">
+                        The answer is <strong class="text-green-600">YES</strong>. Your proposed architecture is a standard distributed system pattern. 
+                        The visualization below represents your logical infrastructure. Click the "Simulate Network" button to visualize data flow over the VPN.
+                    </p>
+                </div>
+
+                <!-- Interactive Visualizer (CSS Grid based) -->
+                <div class="bg-slate-100 rounded-lg p-8 relative overflow-hidden">
+                    <div class="absolute top-4 right-4 z-10">
+                        <button id="simulateBtn" class="bg-orange-600 hover:bg-orange-700 text-white px-4 py-2 rounded-lg text-sm font-semibold transition-colors shadow-sm">
+                            Simulate Processing
+                        </button>
+                    </div>
+
+                    <!-- VPN Layer -->
+                    <div class="border-2 border-dashed border-slate-300 rounded-xl p-4 mb-4 relative">
+                        <div class="absolute -top-3 left-4 bg-slate-100 px-2 text-sm font-mono text-slate-500">VPN Tunnel (Wireguard/Tailscale) 10.0.0.x</div>
+                        
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                            <!-- Node 1 -->
+                            <div class="computer-node bg-white border border-slate-300 rounded-lg p-4 shadow-sm relative transition-all duration-300" id="node1">
+                                <div class="flex items-center justify-between mb-3">
+                                    <span class="font-bold text-slate-700">Computer A</span>
+                                    <span class="text-xs bg-slate-200 px-2 py-1 rounded">10.0.0.1</span>
+                                </div>
+                                <div class="space-y-2">
+                                    <div class="container-box bg-orange-50 border border-orange-100 p-2 rounded text-xs text-center text-orange-800">Docker 1 (Worker)</div>
+                                    <div class="container-box bg-orange-50 border border-orange-100 p-2 rounded text-xs text-center text-orange-800">Docker 2 (Worker)</div>
+                                    <div class="container-box bg-orange-50 border border-orange-100 p-2 rounded text-xs text-center text-orange-800">Docker 3 (Worker)</div>
+                                </div>
+                            </div>
+
+                            <!-- Node 2 -->
+                            <div class="computer-node bg-white border border-slate-300 rounded-lg p-4 shadow-sm relative transition-all duration-300" id="node2">
+                                <div class="flex items-center justify-between mb-3">
+                                    <span class="font-bold text-slate-700">Computer B</span>
+                                    <span class="text-xs bg-slate-200 px-2 py-1 rounded">10.0.0.2</span>
+                                </div>
+                                <div class="space-y-2">
+                                    <div class="container-box bg-orange-50 border border-orange-100 p-2 rounded text-xs text-center text-orange-800">Docker 4 (Worker)</div>
+                                    <div class="container-box bg-orange-50 border border-orange-100 p-2 rounded text-xs text-center text-orange-800">Docker 5 (Worker)</div>
+                                    <div class="container-box bg-orange-50 border border-orange-100 p-2 rounded text-xs text-center text-orange-800">Docker 6 (Worker)</div>
+                                </div>
+                            </div>
+
+                            <!-- Node 3 -->
+                            <div class="computer-node bg-white border border-slate-300 rounded-lg p-4 shadow-sm relative transition-all duration-300" id="node3">
+                                <div class="flex items-center justify-between mb-3">
+                                    <span class="font-bold text-slate-700">Computer C</span>
+                                    <span class="text-xs bg-slate-200 px-2 py-1 rounded">10.0.0.3</span>
+                                </div>
+                                <div class="space-y-2">
+                                    <div class="container-box bg-orange-50 border border-orange-100 p-2 rounded text-xs text-center text-orange-800">Docker 7 (Worker)</div>
+                                    <div class="container-box bg-orange-50 border border-orange-100 p-2 rounded text-xs text-center text-orange-800">Docker 8 (Worker)</div>
+                                    <div class="container-box bg-orange-50 border border-orange-100 p-2 rounded text-xs text-center text-orange-800">Docker 9 (Worker)</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div id="statusText" class="text-center text-sm font-medium text-slate-500 mt-2">
+                        Status: System Idle. Waiting for distribution strategy.
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 2: Implementation Strategies -->
+        <section class="mb-16 grid grid-cols-1 lg:grid-cols-2 gap-8">
+            <!-- Strategy Selector -->
+            <div>
+                <div class="mb-4">
+                    <h2 class="text-2xl font-bold text-slate-800">2. Implementation Strategy</h2>
+                    <p class="text-slate-600 mt-2">
+                        How you code the Rust algorithm determines how the 9 containers talk to each other. Select a pattern to see details.
+                    </p>
+                </div>
+
+                <div class="space-y-4" id="strategyOptions">
+                    <!-- Option A -->
+                    <button class="strategy-btn w-full text-left p-4 rounded-lg border-2 border-orange-500 bg-orange-50 transition-all" data-strategy="queue">
+                        <div class="flex justify-between items-center mb-1">
+                            <span class="font-bold text-slate-800">A. Competing Consumers (Recommended)</span>
+                            <span class="text-xs bg-white border border-slate-200 px-2 py-1 rounded text-slate-600">Easiest</span>
+                        </div>
+                        <p class="text-sm text-slate-600">Use a central queue (Redis/RabbitMQ). Containers pull jobs independently.</p>
+                    </button>
+
+                    <!-- Option B -->
+                    <button class="strategy-btn w-full text-left p-4 rounded-lg border border-slate-200 bg-white hover:border-orange-300 transition-all" data-strategy="actor">
+                        <div class="flex justify-between items-center mb-1">
+                            <span class="font-bold text-slate-800">B. Distributed Actors</span>
+                            <span class="text-xs bg-slate-100 px-2 py-1 rounded text-slate-600">Resilient</span>
+                        </div>
+                        <p class="text-sm text-slate-600">Nodes send messages directly to specific workers. Great for stateful logic.</p>
+                    </button>
+
+                    <!-- Option C -->
+                    <button class="strategy-btn w-full text-left p-4 rounded-lg border border-slate-200 bg-white hover:border-orange-300 transition-all" data-strategy="mpi">
+                        <div class="flex justify-between items-center mb-1">
+                            <span class="font-bold text-slate-800">C. MPI (Message Passing Interface)</span>
+                            <span class="text-xs bg-slate-100 px-2 py-1 rounded text-slate-600">Max Performance</span>
+                        </div>
+                        <p class="text-sm text-slate-600">Traditional High Performance Computing (HPC). Complex setup, max speed.</p>
+                    </button>
+                </div>
+            </div>
+
+            <!-- Strategy Details & Chart -->
+            <div class="bg-white rounded-xl shadow-sm border border-slate-200 p-6 flex flex-col">
+                <div id="strategyDetails" class="mb-6 flex-grow">
+                    <h3 class="text-xl font-bold text-slate-800 mb-2" id="detailTitle">Strategy A: Message Queue</h3>
+                    <p class="text-slate-600 mb-4 text-sm" id="detailDesc">
+                        In this model, one container (or an external service) acts as a job manager. It pushes tasks to a Queue (like Redis). All 9 Docker containers simply run a loop: pop a task, compute, save result.
+                    </p>
+                    <div class="bg-slate-50 p-3 rounded border border-slate-200">
+                        <h4 class="text-xs font-bold text-slate-500 uppercase mb-2">Key Rust Crates</h4>
+                        <div class="flex gap-2 flex-wrap" id="detailCrates">
+                            <span class="text-xs bg-slate-200 px-2 py-1 rounded font-mono">lapin (RabbitMQ)</span>
+                            <span class="text-xs bg-slate-200 px-2 py-1 rounded font-mono">redis-rs</span>
+                            <span class="text-xs bg-slate-200 px-2 py-1 rounded font-mono">tokio</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Radar Chart Container -->
+                <div class="chart-container">
+                    <canvas id="tradeoffChart"></canvas>
+                </div>
+            </div>
+        </section>
+
+        <!-- Section 3: Curated Resource Library -->
+        <section>
+            <div class="mb-8 flex flex-col md:flex-row md:items-center justify-between gap-4">
+                <div>
+                    <h2 class="text-2xl font-bold text-slate-800">3. Research & References</h2>
+                    <p class="text-slate-600">Curated materials to help you build this exact system.</p>
+                </div>
+                
+                <!-- Filter Controls -->
+                <div class="flex gap-2">
+                    <button class="filter-btn bg-slate-800 text-white px-3 py-1 rounded-full text-sm font-medium" onclick="filterResources('all')">All</button>
+                    <button class="filter-btn bg-slate-200 text-slate-600 hover:bg-slate-300 px-3 py-1 rounded-full text-sm font-medium" onclick="filterResources('video')">Videos</button>
+                    <button class="filter-btn bg-slate-200 text-slate-600 hover:bg-slate-300 px-3 py-1 rounded-full text-sm font-medium" onclick="filterResources('paper')">Papers/Docs</button>
+                    <button class="filter-btn bg-slate-200 text-slate-600 hover:bg-slate-300 px-3 py-1 rounded-full text-sm font-medium" onclick="filterResources('tutorial')">Tutorials</button>
+                </div>
+            </div>
+
+            <!-- Resource Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="resourceGrid">
+                <!-- Resources injected via JS -->
+            </div>
+        </section>
+
+    </div>
+
+    <script>
+        // --- DATA & STATE ---
+        
+        // 1. Strategy Data
+        const strategies = {
+            queue: {
+                title: "Strategy A: Competing Consumers",
+                desc: "The most robust method for 9 containers. You spin up a Redis instance on one node (accessible via VPN). All 9 containers use the `redis-rs` crate to `BLPOP` (blocking pop) tasks. If a node dies, the task isn't lost (if using acknowledgements). No complex mesh networking required.",
+                crates: ["redis-rs", "lapin (RabbitMQ)", "tokio", "serde_json"],
+                chartData: [90, 40, 95, 80, 60] // [Reliability, Complexity, Scalability, DevSpeed, LatencyPerf]
+            },
+            actor: {
+                title: "Strategy B: Distributed Actors",
+                desc: "Using the Actor Model, each container is an 'Actor'. You can send messages like `addr.send(Compute { data })`. Frameworks like Bastion handle the cluster formation over the network automatically. Requires configuring the cluster.conf to know about the 3 VPN IP addresses.",
+                crates: ["bastion", "actix-web", "lunatic", "zenoh"],
+                chartData: [85, 70, 90, 60, 85]
+            },
+            mpi: {
+                title: "Strategy C: Message Passing Interface (MPI)",
+                desc: "The scientific standard. Uses `rsmpi`. You launch the job using `mpirun -hosts node1,node2,node3`. It requires SSH access between nodes and strict network setup. Best if your algorithm needs heavy synchronization between steps (e.g., matrix multiplication across nodes).",
+                crates: ["rsmpi", "mpi-sys"],
+                chartData: [70, 95, 80, 30, 99]
+            }
+        };
+
+        // 2. Resource Data (The "Strong References")
+        const resources = [
+            {
+                type: "video",
+                title: "Crust of Rust: Async/Await",
+                author: "Jon Gjengset",
+                desc: "Essential viewing. To run distributed Rust, you must understand the Tokio runtime, as network calls are asynchronous.",
+                link: "YouTube"
+            },
+            {
+                type: "tutorial",
+                title: "Rust Microservices with Tonic (gRPC)",
+                author: "LogRocket",
+                desc: "Learn how to make containers talk to each other efficiently using gRPC, a common pattern for node-to-node communication.",
+                link: "Web Tutorial"
+            },
+            {
+                type: "paper",
+                title: "Bastion: Highly-Available Distributed Actors",
+                author: "Bastion Project",
+                desc: "Documentation for the Bastion crate, which is specifically designed to create fault-tolerant distributed systems in Rust.",
+                link: "Crate Docs"
+            },
+            {
+                type: "tutorial",
+                title: "Docker Swarm Mode Overview",
+                author: "Docker Inc.",
+                desc: "You have 3 computers. Docker Swarm is the easiest way to turn them into a single virtual computer to manage your 9 containers.",
+                link: "Documentation"
+            },
+            {
+                type: "video",
+                title: "Building Distributed Systems in Rust",
+                author: "InfoQ",
+                desc: "A high-level conference talk covering the architectural patterns suitable for Rust-based distributed computing.",
+                link: "Video"
+            },
+            {
+                type: "paper",
+                title: "rsmpi: MPI bindings for Rust",
+                author: "GitHub",
+                desc: "If you need pure number-crunching speed and synchronized steps, this library connects Rust to standard HPC MPI implementations.",
+                link: "GitHub"
+            }
+        ];
+
+        // --- CHART INITIALIZATION ---
+        
+        let radarChart;
+
+        function initChart() {
+            const ctx = document.getElementById('tradeoffChart').getContext('2d');
+            radarChart = new Chart(ctx, {
+                type: 'radar',
+                data: {
+                    labels: ['Reliability', 'Setup Complexity', 'Scalability', 'Dev Speed', 'Raw Performance'],
+                    datasets: [{
+                        label: 'Strategy Score',
+                        data: strategies.queue.chartData,
+                        fill: true,
+                        backgroundColor: 'rgba(234, 88, 12, 0.2)',
+                        borderColor: 'rgb(234, 88, 12)',
+                        pointBackgroundColor: 'rgb(234, 88, 12)',
+                        pointBorderColor: '#fff',
+                        pointHoverBackgroundColor: '#fff',
+                        pointHoverBorderColor: 'rgb(234, 88, 12)'
+                    }]
+                },
+                options: {
+                    maintainAspectRatio: false,
+                    responsive: true,
+                    elements: {
+                        line: { borderWidth: 3 }
+                    },
+                    scales: {
+                        r: {
+                            angleLines: { display: true },
+                            suggestedMin: 0,
+                            suggestedMax: 100,
+                            ticks: { display: false } // Hide numbers for cleaner look
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false }
+                    }
+                }
+            });
+        }
+
+        // --- INTERACTION LOGIC ---
+
+        // 1. Update Strategy View
+        function selectStrategy(key) {
+            const data = strategies[key];
+            
+            // Update Text
+            document.getElementById('detailTitle').textContent = data.title;
+            document.getElementById('detailDesc').textContent = data.desc;
+            
+            // Update Crates
+            const cratesContainer = document.getElementById('detailCrates');
+            cratesContainer.innerHTML = '';
+            data.crates.forEach(crate => {
+                const span = document.createElement('span');
+                span.className = 'text-xs bg-slate-200 px-2 py-1 rounded font-mono';
+                span.textContent = crate;
+                cratesContainer.appendChild(span);
+            });
+
+            // Update Chart
+            radarChart.data.datasets[0].data = data.chartData;
+            radarChart.update();
+
+            // Update Buttons Styling
+            document.querySelectorAll('.strategy-btn').forEach(btn => {
+                const isSelected = btn.dataset.strategy === key;
+                if (isSelected) {
+                    btn.classList.remove('bg-white', 'border-slate-200');
+                    btn.classList.add('bg-orange-50', 'border-orange-500', 'border-2');
+                } else {
+                    btn.classList.add('bg-white', 'border-slate-200');
+                    btn.classList.remove('bg-orange-50', 'border-orange-500', 'border-2');
+                }
+            });
+        }
+
+        // 2. Resource Filtering
+        function renderResources(filter = 'all') {
+            const grid = document.getElementById('resourceGrid');
+            grid.innerHTML = '';
+            
+            const icons = {
+                video: '▶️',
+                paper: '📄',
+                tutorial: '🛠️'
+            };
+
+            const filtered = filter === 'all' ? resources : resources.filter(r => r.type === filter);
+
+            filtered.forEach(res => {
+                const card = document.createElement('div');
+                card.className = 'bg-white rounded-lg border border-slate-200 p-5 hover:shadow-md transition-shadow';
+                card.innerHTML = `
+                    <div class="flex justify-between items-start mb-3">
+                        <span class="text-2xl">${icons[res.type]}</span>
+                        <span class="text-xs font-bold uppercase tracking-wide text-slate-400 border border-slate-100 px-2 py-0.5 rounded">${res.type}</span>
+                    </div>
+                    <h3 class="font-bold text-slate-800 mb-1">${res.title}</h3>
+                    <p class="text-xs text-orange-600 mb-3 font-medium">${res.author}</p>
+                    <p class="text-sm text-slate-600 mb-4">${res.desc}</p>
+                    <div class="pt-3 border-t border-slate-100">
+                        <span class="text-xs font-bold text-slate-400">Source: ${res.link}</span>
+                    </div>
+                `;
+                grid.appendChild(card);
+            });
+        }
+
+        function filterResources(type) {
+            renderResources(type);
+            // Update active button state
+            document.querySelectorAll('.filter-btn').forEach(btn => {
+                if (btn.textContent.toLowerCase().includes(type) || (type === 'all' && btn.textContent === 'All')) {
+                    btn.classList.remove('bg-slate-200', 'text-slate-600');
+                    btn.classList.add('bg-slate-800', 'text-white');
+                } else {
+                    btn.classList.add('bg-slate-200', 'text-slate-600');
+                    btn.classList.remove('bg-slate-800', 'text-white');
+                }
+            });
+        }
+
+        // 3. Visualizer Animation
+        function simulateNetwork() {
+            const status = document.getElementById('statusText');
+            status.textContent = "Status: Distributing Payload via VPN...";
+            status.className = "text-center text-sm font-bold text-orange-600 mt-2";
+            
+            const nodes = ['node1', 'node2', 'node3'];
+            let delay = 0;
+
+            // Sequential activation to simulate data distribution
+            nodes.forEach((id, index) => {
+                setTimeout(() => {
+                    const node = document.getElementById(id);
+                    node.classList.add('node-active', 'border-orange-500', 'shadow-lg');
+                    
+                    // Highlight containers inside
+                    const containers = node.querySelectorAll('.container-box');
+                    containers.forEach(c => c.classList.replace('bg-orange-50', 'bg-orange-200'));
+                    
+                    setTimeout(() => {
+                        node.classList.remove('node-active', 'border-orange-500', 'shadow-lg');
+                        containers.forEach(c => c.classList.replace('bg-orange-200', 'bg-orange-50'));
+                        
+                        if (index === 2) {
+                            status.textContent = "Status: Processing Complete. Results Aggregated.";
+                            status.className = "text-center text-sm font-medium text-green-600 mt-2";
+                        }
+                    }, 1500);
+                }, delay);
+                delay += 800; // Staggered delay
+            });
+        }
+
+        // --- INITIALIZATION ---
+        window.addEventListener('DOMContentLoaded', () => {
+            initChart();
+            renderResources();
+            
+            // Setup Strategy Buttons
+            document.querySelectorAll('.strategy-btn').forEach(btn => {
+                btn.addEventListener('click', (e) => selectStrategy(btn.dataset.strategy));
+            });
+
+            // Setup Simulate Button
+            document.getElementById('simulateBtn').addEventListener('click', simulateNetwork);
+        });
+
+    </script>
+</body>
+</html>
